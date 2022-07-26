@@ -3,12 +3,14 @@ Code challenge - Backend
 1-Em um terminal separado para executar o servidor hivemq com docker:
 sudo docker run -p 8080:8080 -p 1883:1883 hivemq/hivemq4
 
-2-Obtem a temperatura do OpenWeatherMap:
+2-Obtem a temperatura do OpenWeatherMap e publica no mqtt:
 Em um terminal separado, executar o serviço que obtem a temperatura do OpenWeatherMap inserindo no topico "casa/temp" do Hivemq:
  	python3 ./owm_mqtt.py 
 
 3-Endpoints Api Rest:
-Em um terminal separado, executar o serviço que implementa endpoints Api Rest e insere nos topicos do Hivemq: 
+Em um terminal separado, Instalar o flask:
+    pip3 install flask
+Executar o serviço que implementa endpoints Api Rest e insere nos topicos do Hivemq: 
 	python3 ./app_mqtt.py 
 
 4-comandos Api Rest
@@ -26,18 +28,33 @@ http PUT localhost:5000/parametros/3 valor="10"
 Referência dos parametros:
 parametros = [
     {
-        'id': 1, 'nome': 'temp_ON',  'valor': '22'
+        'id': 1,
+        'nome': 'temp_ON',
+        'valor': '22'
     },
     {
-        'id': 2, 'nome': 'temp_OFF', 'valor': '15'
+        'id': 2,
+        'nome': 'temp_OFF',
+        'valor': '15'
     },
     {
-        'id': 3, 'nome': 'Hora_ON',  'valor': '10:00'
+        'id': 3,
+        'nome': 'Hora_ON',
+        'valor': '10:00'
     },
     {
-        'id': 4, 'nome': 'Hora_OFF', 'valor': '18:00'
+        'id': 4,
+        'nome': 'Hora_OFF',
+        'valor': '18:00'
     },
     {
-        'id': 5, 'nome': 'STATUS_ON_OFF', 'valor': 'OFF'
+        'id': 5,
+        'nome': 'STATUS_ON_OFF',
+        'valor': 'OFF'
+    },
+    {
+        'id': 6,
+        'nome': 'COMANDO_ON_OFF',
+        'valor': 'OFF'
     }
 ]

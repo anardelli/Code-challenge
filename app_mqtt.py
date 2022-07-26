@@ -62,6 +62,24 @@ def on_subscribe(client, userdata, mid, granted_qos, properties=None):
 # print message, useful for checking if it was successful
 def on_message(client, userdata, msg):
     print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+    #verifica se deve ligar COMANDO_ON_OFF = ON
+    temp = int(float(msg.payload))
+    print(temp)
+    # 'id': 6, 'nome': 'COMANDO_ON_OFF',  'valor': 'OFF'
+    comando = parametros[5]  
+    temp_ON = parametros[0]
+    temp_OFF = parametros[1]
+    print(int(temp_ON['valor']))
+    if temp > int(temp_ON['valor']) and comando['valor'] == "OFF": # ON
+        print("ON")
+        comando.update( { 'valor': 'ON' } )
+        client.publish(f"{MQTT_SERVICE_TOPIC}/{comando['nome']}", payload='ON', qos=1)
+
+    else:
+        if temp < int(temp_OFF['valor']) and comando['valor'] == "ON": # OFF
+            print("OFF")
+            comando.update( { 'valor': 'OFF' } )
+            client.publish(f"{MQTT_SERVICE_TOPIC}/{comando['nome']}", payload='OFF', qos=1)
 
 
 #################################
@@ -70,7 +88,6 @@ def on_message(client, userdata, msg):
 @app.route('/parametros', methods=['GET'])
 def get_parametros():
     return jsonify({'data': parametros})
-
 
 @app.route('/parametros/<int:param_id>', methods=['GET'])
 def get_parametro(param_id):
@@ -90,14 +107,9 @@ def update_parametro(param_id):
 
     data = request.get_json()
 
-    parametro.update(
-        {
-            # 'nome': data.get('nome'),
-            'valor': data.get('valor')
-        }
-    )
+    parametro.update( { 'valor': data.get('valor') }  )
     
-    client.publish(f"{MQTT_SERVICE_TOPIC}/{parametro['nome']}", payload=parametro['valor']), qos=1)
+    client.publish(f"{MQTT_SERVICE_TOPIC}/{parametro['nome']}", payload=parametro['valor'], qos=1)
 
     return jsonify(parametro)
 
@@ -117,10 +129,9 @@ if __name__ == '__main__':
     client.on_publish = on_publish
 
     # subscribe to all topics by using the wildcard "#"
-    client.subscribe("casa/#", qos=1)
+    client.subscribe(f"{MQTT_SERVICE_TOPIC}/{'#'}", qos=1)
 
     #publish data
-    # client.publish("encyclopedia/temperature", payload="hot", qos=1)
     client.loop_start()
 
     app.run()
