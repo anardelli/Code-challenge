@@ -31,11 +31,11 @@ if __name__ == "__main__":
             else:
                 print("No data from OWM.")
 
-            last_update = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['dt']))
-            for i in range(60):
-                print(f"{i:02}-{MQTT_SERVICE_HOST}:{MQTT_SERVICE_PORT} [last_update={last_update}]")
+            owm_update = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(data['dt']))
+            for i in range(60):  # aguarda 1 minuto para obter um novo valor
+                print(f"{i:02}-{MQTT_SERVICE_HOST}:{MQTT_SERVICE_PORT} [owm_update={owm_update}]")
                 publish.multiple(msgs, hostname=MQTT_SERVICE_HOST, port=MQTT_SERVICE_PORT, client_id=MQTT_CLIENT_ID)
-                time.sleep(3)
+                time.sleep(1)
 
         except Exception:
             print("An error occured:", exc_info=True)

@@ -4,6 +4,13 @@ import paho.mqtt.client as paho
 from flask import Flask, jsonify, request
 from http import HTTPStatus
 
+OPENWEATHER_APP_ID="37faa6b3c472cea6f02216d4c4389925"
+OPENWEATHER_CITY_ID=3470353
+MQTT_SERVICE_HOST="localhost"
+MQTT_SERVICE_PORT=1883
+MQTT_SERVICE_TOPIC="casa"
+MQTT_CLIENT_ID="service"
+
 app = Flask(__name__)
 
 parametros = [
@@ -30,6 +37,11 @@ parametros = [
     {
         'id': 5,
         'nome': 'STATUS_ON_OFF',
+        'valor': 'OFF'
+    },
+    {
+        'id': 6,
+        'nome': 'COMANDO_ON_OFF',
         'valor': 'OFF'
     }
 ]
@@ -85,7 +97,7 @@ def update_parametro(param_id):
         }
     )
     
-    client.publish("casa/valor", payload=data.get('valor'), qos=1)
+    client.publish(f"{MQTT_SERVICE_TOPIC}/{parametro['nome']}", payload=parametro['valor']), qos=1)
 
     return jsonify(parametro)
 
